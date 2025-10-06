@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Auroras Quiz Battle (Physics Fun Edition)</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!--main css -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            color: #333;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-option {
+            background: #f0f0f0;
+            color: #333;
+            text-align: left;
+            padding: 15px 20px;
+        }
+
+        .btn-option:hover {
+            background: #e0e0e0;
+            transform: translateX(5px);
+        }
+
+        .btn-option.correct {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-option.wrong {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-option:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .level-selector, .speed-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .level-btn, .speed-btn {
+            padding: 15px;
+            border: 2px solid #667eea;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .level-btn.selected, .speed-btn.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .info-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .timer-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.1s linear;
+        }
+
+        .timer-fill.warning {
+            background: linear-gradient(90deg, #ff9800, #ff5722);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pause-btn {
+            background: #ff9800;
+            color: white;
+        }
+
+        .skip-btn {
+            background: #2196f3;
+            color: white;
+        }
+
+        .quit-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .score-history {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .share-btn {
+            background: #4caf50;
+            color: white;
+            margin-top: 15px;
+        }
+
+        footer {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        footer a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-title {
+                font-size: 1.5rem;
+            }
+
+            .game-subtitle {
+                font-size: 0.95rem;
+            }
+            
+            .logo {
+                width: 70px;
+                height: 70px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .level-selector, .speed-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    
+    
+    <!-- pop up for devloper info -->
+<style>
+.sharifulinfo-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  animation: sharifulinfo-fadeIn 0.4s ease;
+  overflow-y: auto;
+  padding: 20px 10px;
+  box-sizing: border-box;
+}
+
+.sharifulinfo-modal-content {
+  position: relative;
+  background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+  margin: auto;
+  border-radius: 25px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 420px;
+  animation: sharifulinfo-slideIn 0.5s ease;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.sharifulinfo-modal-inner {
+  padding: 30px 25px;
+  position: relative;
+}
+
+.sharifulinfo-modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #1a2a6c, #b21f1f, #fdbb2d);
+  z-index: 1;
+}
+
+.sharifulinfo-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sharifulinfo-close:hover {
+  transform: scale(1.1) rotate(90deg);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fdbb2d;
+}
+
+.sharifulinfo-header {
+  margin-bottom: 30px;
+}
+
+.sharifulinfo-image-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 25px;
+}
+
+.sharifulinfo-image {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.sharifulinfo-image:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.sharifulinfo-image-overlay {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d);
+  z-index: 1;
+  opacity: 0.5;
+  animation: sharifulinfo-rotate 10s linear infinite;
+}
+
+.sharifulinfo-name {
+  font-size: 26px;
+  margin: 15px 0 10px;
+  font-weight: 700;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.sharifulinfo-department {
+  font-size: 18px;
+  margin: 12px 0;
+  font-weight: 600;
+  color: #fdbb2d;
+  letter-spacing: 1px;
+}
+
+.sharifulinfo-session {
+  font-size: 16px;
+  margin: 10px 0;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.sharifulinfo-profession-container {
+  margin: 20px 0;
+}
+
+.sharifulinfo-profession {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  display: inline-block;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.sharifulinfo-social {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.sharifulinfo-social-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 18px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sharifulinfo-social-link:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.sharifulinfo-social-link:nth-child(1):hover {
+  background: linear-gradient(135deg, rgba(59, 89, 152, 0.8), rgba(59, 89, 152, 0.9));
+}
+
+.sharifulinfo-social-link:nth-child(2):hover {
+  background: linear-gradient(135deg, rgba(0, 132, 255, 0.8), rgba(0, 132, 255, 0.9));
+}
+
+.sharifulinfo-social-link:nth-child(3):hover {
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.8), rgba(37, 211, 102, 0.9));
+}
+
+.sharifulinfo-social-link:nth-child(4):hover {
+  background: linear-gradient(135deg, rgba(212, 70, 56, 0.8), rgba(212, 70, 56, 0.9));
+}
+
+.sharifulinfo-social-link i {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.sharifulinfo-social-link span {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Animations */
+@keyframes sharifulinfo-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sharifulinfo-slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes sharifulinfo-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 480px) {
+  .sharifulinfo-modal {
+    padding: 10px 5px;
+  }
+  
+  .sharifulinfo-modal-content {
+    max-width: 95%;
+    border-radius: 20px;
+  }
+  
+  .sharifulinfo-modal-inner {
+    padding: 25px 20px;
+  }
+  
+  .sharifulinfo-image {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .sharifulinfo-name {
+    font-size: 22px;
+  }
+  
+  .sharifulinfo-department {
+    font-size: 16px;
+  }
+  
+  .sharifulinfo-session, 
+  .sharifulinfo-profession {
+    font-size: 14px;
+  }
+  
+  .sharifulinfo-social {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .sharifulinfo-social-link {
+    padding: 12px 8px;
+  }
+  
+  .sharifulinfo-social-link i {
+    font-size: 22px;
+  }
+  
+  .sharifulinfo-social-link span {
+    font-size: 11px;
+  }
+  
+  .sharifulinfo-close {
+    top: 10px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    font-size: 26px;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 350px) {
+  .sharifulinfo-modal-inner {
+    padding: 20px 15px;
+  }
+  
+  .sharifulinfo-image {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .sharifulinfo-name {
+    font-size: 20px;
+  }
+  
+  .sharifulinfo-social {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<!-- header css-->
+<style>
+    .header {
+        text-align: center;
+        margin-bottom: 30px;
+        animation: fadeInDown 0.8s ease;
+        background: linear-gradient(135deg, 
+            rgba(16, 14, 44, 0.95) 0%, 
+            rgba(37, 33, 86, 0.95) 50%, 
+            rgba(58, 49, 128, 0.95) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 25px;
+        padding: 40px 30px;
+        box-shadow: 
+            0 25px 50px rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent);
+        transition: left 0.6s ease;
+    }
+
+    .header:hover::before {
+        left: 100%;
+    }
+
+    .header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, 
+            #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #ff6b6b);
+        background-size: 400% 100%;
+        animation: gradientShift 8s ease infinite;
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 25px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 2;
+    }
+
+    .logo {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        box-shadow: 
+            0 15px 35px rgba(0, 0, 0, 0.5),
+            0 5px 15px rgba(0, 0, 0, 0.3),
+            0 0 0 2px rgba(255, 255, 255, 0.2),
+            inset 0 0 25px rgba(255, 255, 255, 0.1);
+        border: 3px solid rgba(255, 255, 255, 0.25);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+    }
+
+    .logo::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent 30%
+        );
+        animation: rotate 6s linear infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .logo:hover::before {
+        opacity: 1;
+    }
+
+    .logo:hover {
+        transform: scale(1.18) rotate(8deg);
+        box-shadow: 
+            0 20px 45px rgba(0, 0, 0, 0.6),
+            0 8px 25px rgba(0, 0, 0, 0.4),
+            0 0 0 3px rgba(255, 255, 255, 0.25),
+            inset 0 0 35px rgba(255, 255, 255, 0.15);
+    }
+
+    .game-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        text-shadow: 
+            4px 4px 12px rgba(0, 0, 0, 0.6),
+            0 0 30px rgba(100, 149, 237, 0.4);
+        background: linear-gradient(135deg, 
+            #ffffff 0%, 
+            #e0e7ff 15%, 
+            #a5b4fc 35%, 
+            #818cf8 50%, 
+            #6366f1 65%, 
+            #4f46e5 80%, 
+            #3730a3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+        letter-spacing: 1.2px;
+        margin-bottom: 12px;
+        position: relative;
+        display: inline-block;
+        padding: 0 10px;
+    }
+
+    .game-title::before {
+        content: '🎮';
+        position: absolute;
+        left: -45px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2.5rem;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        animation: bounce 2s ease-in-out infinite;
+    }
+
+    .game-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 4px;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.8), 
+            transparent);
+        border-radius: 2px;
+        opacity: 0.8;
+    }
+
+    .game-subtitle {
+        font-size: 1.4rem;
+        font-weight: 600;
+        opacity: 0.95;
+        text-shadow: 
+            2px 2px 8px rgba(0, 0, 0, 0.5),
+            0 0 15px rgba(199, 210, 254, 0.3);
+        color: #e0e7ff;
+        letter-spacing: 0.8px;
+        position: relative;
+        display: inline-block;
+        padding: 8px 25px;
+        border-radius: 25px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 
+            0 8px 20px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .game-subtitle:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow: 
+            0 12px 25px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+        0% {
+            opacity: 0;
+            transform: translateY(-40px) scale(0.95);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes gradientShift {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(-50%) scale(1);
+        }
+        50% {
+            transform: translateY(-50%) scale(1.2);
+        }
+    }
+
+    /* Floating particles */
+    .floating-particle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        animation: float 12s infinite linear;
+        z-index: 1;
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(100%) translateX(0) rotate(0deg);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100%) translateX(30px) rotate(180deg);
+            opacity: 0;
+        }
+    }
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+    <div class="logo-container">
+        <img src="https://i.imgur.com/nIOAmb3.png" alt="Logo" class="logo">
+        <div>
+            <h1 class="game-title">Auroras Quiz Battle</h1>
+            <div class="game-subtitle">(Physics Fun Edition)</div>
+        </div>
+    </div>
+</div>
+
+        <!-- Home Screen -->
+        <div id="homeScreen" class="card">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #667eea;">স্বাগতম!</h2>
+            <button class="btn btn-primary" onclick="showLevelSelection()">নতুন গেম শুরু করুন</button>
+            <button class="btn btn-primary" onclick="showScoreHistory()">স্কোর দেখুন</button>
+        </div>
+
+        <!-- Level Selection -->
+        <div id="levelScreen" class="card hidden">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #667eea;">লেভেল নির্বাচন করুন</h2>
+            <div class="level-selector">
+                <div class="level-btn" onclick="selectLevel('easy')">
+                    <div style="font-size: 1.5rem;">😊</div>
+                    <div>ইজি</div>
+                </div>
+                <div class="level-btn" onclick="selectLevel('medium')">
+                    <div style="font-size: 1.5rem;">🤔</div>
+                    <div>মিডিয়াম</div>
+                </div>
+                <div class="level-btn" onclick="selectLevel('hard')">
+                    <div style="font-size: 1.5rem;">🔥</div>
+                    <div>হার্ড</div>
+                </div>
+            </div>
+            <h3 style="text-align: center; margin: 20px 0; color: #667eea;">দ্রুতি নির্বাচন করুন</h3>
+            <div class="speed-selector">
+                <div class="speed-btn" onclick="selectSpeed(15)">
+                    <div style="font-size: 1.5rem;">🐢</div>
+                    <div>১৫ সেকেন্ড</div>
+                </div>
+                <div class="speed-btn" onclick="selectSpeed(10)">
+                    <div style="font-size: 1.5rem;">🏃</div>
+                    <div>১০ সেকেন্ড</div>
+                </div>
+                <div class="speed-btn" onclick="selectSpeed(5)">
+                    <div style="font-size: 1.5rem;">⚡</div>
+                    <div>৫ সেকেন্ড</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="startGame()" id="startGameBtn" disabled>গেম শুরু করুন</button>
+            <button class="btn" style="background: #ccc; margin-top: 10px;" onclick="showHome()">ফিরে যান</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="card hidden">
+            <div class="game-info">
+                <div class="info-item">
+                    <div class="info-label">প্রশ্ন</div>
+                    <div class="info-value" id="questionCounter">1/15</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">স্কোর</div>
+                    <div class="info-value" id="scoreDisplay">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">সময়</div>
+                    <div class="info-value" id="timeDisplay">0:00</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 15px; color: #667eea; font-weight: 600;">
+                <span id="levelDisplay"></span> | <span id="speedDisplay"></span>
+            </div>
+
+            <div class="timer-bar">
+                <div class="timer-fill" id="timerFill"></div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">প্রশ্ন ১</div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+
+            <div id="optionsContainer"></div>
+
+            <div class="controls">
+                <button class="control-btn pause-btn" onclick="togglePause()" id="pauseBtn">⏸ পজ</button>
+                <button class="control-btn skip-btn" onclick="skipQuestion()">⏭ স্কিপ</button>
+                <button class="control-btn quit-btn" onclick="quitGame()">❌ ছেড়ে দিন</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultScreen" class="card hidden">
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">🎉 গেম শেষ!</h2>
+            <div style="text-align: center; font-size: 3rem; margin: 20px 0;" id="resultEmoji">🎊</div>
+            
+            <div style="background: #e8eaf6; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-weight: 600;">মোট খেলা:</span>
+                    <strong id="totalPlaysResult">1</strong>
+                </div>
+                <label style="font-weight: 600; margin-bottom: 5px; display: block;">খেলা নির্বাচন করুন:</label>
+                <select id="gameSelectResult" onchange="updateResultDisplay()" style="margin: 0;">
+                </select>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>লেভেল:</span>
+                    <strong id="resultLevel"></strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>দ্রুতি:</span>
+                    <strong id="resultSpeed"></strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>মোট স্কোর:</span>
+                    <strong id="finalScore">0</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>সঠিক উত্তর:</span>
+                    <strong style="color: #4caf50;" id="correctCount">0</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>ভুল উত্তর:</span>
+                    <strong style="color: #f44336;" id="wrongCount">0</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>স্কিপ করা:</span>
+                    <strong style="color: #ff9800;" id="skippedCount">0</strong>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="showHome()">হোমে ফিরে যান</button>
+            <button class="btn share-btn" onclick="shareScore()">📤 শেয়ার করুন</button>
+        </div>
+
+        <!-- Score History -->
+        <div id="scoreScreen" class="card hidden">
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">📊 স্কোর ইতিহাস</h2>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight: 600; margin-bottom: 5px; display: block;">লেভেল ফিল্টার:</label>
+                <select id="filterLevel" onchange="filterScores()">
+                    <option value="all">সব লেভেল</option>
+                    <option value="easy">ইজি</option>
+                    <option value="medium">মিডিয়াম</option>
+                    <option value="hard">হার্ড</option>
+                </select>
+            </div>
+
+            <div class="score-history" id="scoreHistory"></div>
+            
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="showHome()">ফিরে যান</button>
+        </div>
+    </div>
+    
+    <!-- pop up for devloper info-->
+<div class="sharifulinfo-modal" id="sharifulinfoModal">
+  <div class="sharifulinfo-modal-content">
+    <div class="sharifulinfo-modal-inner">
+      <span class="sharifulinfo-close">&times;</span>
+      
+      <div class="sharifulinfo-header">
+        <div class="sharifulinfo-image-container">
+          <img src="https://i.imgur.com/mm2jLrd.png" alt="MD SHARIFUL ISLAM" class="sharifulinfo-image">
+          <div class="sharifulinfo-image-overlay"></div>
+        </div>
+        <h2 class="sharifulinfo-name">MD SHARIFUL ISLAM</h2>
+        <p class="sharifulinfo-department">DEPARTMENT OF PHYSICS</p>
+        <p class="sharifulinfo-session">SESSION: 24-25</p>
+        <div class="sharifulinfo-profession-container">
+          <p class="sharifulinfo-profession">Professional Web Designer & Developer</p>
+        </div>
+      </div>
+      
+      <div class="sharifulinfo-social">
+        <a href="https://www.facebook.com/share/1G1KQHWXH9/" target="_blank" class="sharifulinfo-social-link">
+          <i class="fab fa-facebook-f"></i>
+          <span>Facebook</span>
+        </a>
+        <a href="https://m.me/msharifulvisionary" target="_blank" class="sharifulinfo-social-link">
+          <i class="fab fa-facebook-messenger"></i>
+          <span>Messenger</span>
+        </a>
+        <a href="https://wa.me/8801735757143" target="_blank" class="sharifulinfo-social-link">
+          <i class="fab fa-whatsapp"></i>
+          <span>WhatsApp</span>
+        </a>
+        <a href="mailto:msharifulvisionary@gmail.com" class="sharifulinfo-social-link">
+          <i class="fas fa-envelope"></i>
+          <span>Email</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <footer>
+        <p>Design and Develop By  <a href="javascript:void(0);" class="designer-link">MD SHARIFUL ISLAM</a></p>
+        <p>© ২০২৫ সরকারি আজিজুল হক কলেজ, বগুড়া - পদার্থবিজ্ঞান বিভাগ</p>
+    </footer>
+
+<!-- main script -->
+    <script>
+        let allQuestions = [];
+        let gameState = {
+            level: null,
+            speed: null,
+            currentQuestionIndex: 0,
+            score: 0,
+            correctAnswers: 0,
+            wrongAnswers: 0,
+            skippedAnswers: 0,
+            questions: [],
+            isPaused: false,
+            timer: null,
+            questionTimer: null,
+            totalTime: 0,
+            questionStartTime: 0,
+            gameStartTime: 0
+        };
+
+        // Load questions from JSON
+        async function loadQuestions() {
+            try {
+                const response = await fetch('questions.json');
+                allQuestions = await response.json();
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                alert('প্রশ্ন লোড করতে সমস্যা হয়েছে। পেজ রিফ্রেশ করুন।');
+            }
+        }
+
+        // Initialize
+        loadQuestions();
+
+        function showHome() {
+            hideAllScreens();
+            document.getElementById('homeScreen').classList.remove('hidden');
+        }
+
+        function showLevelSelection() {
+            hideAllScreens();
+            document.getElementById('levelScreen').classList.remove('hidden');
+        }
+
+        function showScoreHistory() {
+            hideAllScreens();
+            document.getElementById('scoreScreen').classList.remove('hidden');
+            displayScoreHistory();
+        }
+
+        function hideAllScreens() {
+            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+        }
+
+        function selectLevel(level) {
+            gameState.level = level;
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.closest('.level-btn').classList.add('selected');
+            checkStartButton();
+        }
+
+        function selectSpeed(speed) {
+            gameState.speed = speed;
+            document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.closest('.speed-btn').classList.add('selected');
+            checkStartButton();
+        }
+
+        function checkStartButton() {
+            document.getElementById('startGameBtn').disabled = !(gameState.level && gameState.speed);
+        }
+
+        function startGame() {
+            // Get questions for selected level
+            const levelData = allQuestions.find(l => l.level === gameState.level);
+            if (!levelData) return;
+
+            // Shuffle and select 15 questions
+            const shuffled = [...levelData.questions].sort(() => Math.random() - 0.5);
+            gameState.questions = shuffled.slice(0, 15);
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0;
+            gameState.correctAnswers = 0;
+            gameState.wrongAnswers = 0;
+            gameState.skippedAnswers = 0;
+            gameState.totalTime = gameState.speed * 15;
+            gameState.gameStartTime = Date.now();
+
+            hideAllScreens();
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            updateGameInfo();
+            displayQuestion();
+            startTimer();
+        }
+
+        function updateGameInfo() {
+            document.getElementById('questionCounter').textContent = `${gameState.currentQuestionIndex + 1}/15`;
+            document.getElementById('scoreDisplay').textContent = gameState.score;
+            
+            const levelNames = { easy: 'ইজি', medium: 'মিডিয়াম', hard: 'হার্ড' };
+            document.getElementById('levelDisplay').textContent = levelNames[gameState.level];
+            document.getElementById('speedDisplay').textContent = `${gameState.speed} সেকেন্ড`;
+        }
+
+        function displayQuestion() {
+            const question = gameState.questions[gameState.currentQuestionIndex];
+            document.getElementById('questionNumber').textContent = `প্রশ্ন ${gameState.currentQuestionIndex + 1}`;
+            document.getElementById('questionText').textContent = question.question;
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-option';
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(option);
+                container.appendChild(btn);
+            });
+
+            gameState.questionStartTime = Date.now();
+            startQuestionTimer();
+        }
+
+        function startTimer() {
+            const totalSeconds = gameState.totalTime;
+            let elapsed = 0;
+
+            gameState.timer = setInterval(() => {
+                if (gameState.isPaused) return;
+
+                elapsed++;
+                const remaining = totalSeconds - elapsed;
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                document.getElementById('timeDisplay').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                if (remaining <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function startQuestionTimer() {
+            const questionTime = gameState.speed;
+            let elapsed = 0;
+
+            if (gameState.questionTimer) {
+                clearInterval(gameState.questionTimer);
+            }
+
+            gameState.questionTimer = setInterval(() => {
+                if (gameState.isPaused) return;
+
+                elapsed++;
+                const percentage = ((questionTime - elapsed) / questionTime) * 100;
+                const fill = document.getElementById('timerFill');
+                fill.style.width = percentage + '%';
+
+                if (percentage < 30) {
+                    fill.classList.add('warning');
+                } else {
+                    fill.classList.remove('warning');
+                }
+
+                if (elapsed >= questionTime) {
+                    clearInterval(gameState.questionTimer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        function selectAnswer(selectedOption) {
+            clearInterval(gameState.questionTimer);
+            
+            const question = gameState.questions[gameState.currentQuestionIndex];
+            const isCorrect = selectedOption === question.answer;
+            const timeSpent = (Date.now() - gameState.questionStartTime) / 1000;
+
+            // Disable all buttons
+            document.querySelectorAll('.btn-option').forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === question.answer) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            // Calculate score
+            if (isCorrect) {
+                gameState.correctAnswers++;
+                gameState.score += 10;
+
+                // Bonus points
+                const bonusTime = gameState.level === 'easy' ? 7 : gameState.level === 'medium' ? 5 : 3;
+                if (timeSpent <= bonusTime) {
+                    gameState.score += 2;
+                }
+            } else {
+                gameState.wrongAnswers++;
+                gameState.score -= 5;
+            }
+
+            updateGameInfo();
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 1500);
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestionIndex++;
+
+            if (gameState.currentQuestionIndex >= 15) {
+                endGame();
+            } else {
+                displayQuestion();
+                updateGameInfo();
+            }
+        }
+
+        function togglePause() {
+            gameState.isPaused = !gameState.isPaused;
+            const btn = document.getElementById('pauseBtn');
+            btn.textContent = gameState.isPaused ? '▶ চালু করুন' : '⏸ পজ';
+        }
+
+        function quitGame() {
+            if (confirm('আপনি কি নিশ্চিত গেম ছেড়ে দিতে চান?')) {
+                clearInterval(gameState.timer);
+                clearInterval(gameState.questionTimer);
+                showHome();
+            }
+        }
+
+        function endGame() {
+            clearInterval(gameState.timer);
+            clearInterval(gameState.questionTimer);
+
+            // Save score
+            saveScore();
+
+            // Show result
+            hideAllScreens();
+            document.getElementById('resultScreen').classList.remove('hidden');
+            
+            populateResultGameSelector();
+            
+            const levelNames = { easy: 'ইজি', medium: 'মিডিয়াম', hard: 'হার্ড' };
+            document.getElementById('resultLevel').textContent = levelNames[gameState.level];
+            document.getElementById('resultSpeed').textContent = `${gameState.speed} সেকেন্ড`;
+            
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('correctCount').textContent = gameState.correctAnswers;
+            document.getElementById('wrongCount').textContent = gameState.wrongAnswers;
+            document.getElementById('skippedCount').textContent = gameState.skippedAnswers;
+
+            const emoji = gameState.score >= 100 ? '🏆' : gameState.score >= 50 ? '🎉' : '💪';
+            document.getElementById('resultEmoji').textContent = emoji;
+        }
+
+        function saveScore() {
+            const scores = JSON.parse(localStorage.getItem('quizScores') || '[]');
+            scores.push({
+                level: gameState.level,
+                speed: gameState.speed,
+                score: gameState.score,
+                correct: gameState.correctAnswers,
+                wrong: gameState.wrongAnswers,
+                skipped: gameState.skippedAnswers,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('quizScores', JSON.stringify(scores));
+        }
+
+        function displayScoreHistory() {
+            const scores = JSON.parse(localStorage.getItem('quizScores') || '[]');
+            const container = document.getElementById('scoreHistory');
+            
+            if (scores.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">কোনো স্কোর নেই</p>';
+                return;
+            }
+
+            const levelNames = { easy: 'ইজি', medium: 'মিডিয়াম', hard: 'হার্ড' };
+            
+            // Group by level and speed
+            const grouped = {};
+            scores.forEach((score, index) => {
+                const key = `${score.level}-${score.speed}`;
+                if (!grouped[key]) {
+                    grouped[key] = [];
+                }
+                grouped[key].push({ ...score, originalIndex: index });
+            });
+
+            container.innerHTML = '';
+            Object.entries(grouped).forEach(([key, games]) => {
+                const [level, speed] = key.split('-');
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>${levelNames[level]} - ${speed} সেকেন্ড</strong>
+                        <span>মোট খেলা: ${games.length}</span>
+                    </div>
+                    <select id="select-${key}" onchange="showGameDetails('${key}', this.value)" style="margin-bottom: 10px;">
+                        ${games.map((g, i) => `<option value="${i}">খেলা ${i + 1} - ${new Date(g.date).toLocaleDateString('bn-BD')}</option>`).join('')}
+                    </select>
+                    <div id="details-${key}">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>স্কোর:</span>
+                            <strong>${games[0].score}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>সঠিক:</span>
+                            <strong style="color: #4caf50;">${games[0].correct}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>ভুল:</span>
+                            <strong style="color: #f44336;">${games[0].wrong}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>স্কিপ:</span>
+                            <strong style="color: #ff9800;">${games[0].skipped || 0}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px; padding-top: 5px; border-top: 1px solid #ddd;">
+                            <span>তারিখ:</span>
+                            <strong>${new Date(games[0].date).toLocaleDateString('bn-BD')}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>সময়:</span>
+                            <strong>${new Date(games[0].date).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })}</strong>
+                        </div>
+                    </div>
+                    <button class="btn share-btn" style="margin-top: 10px; padding: 10px;" onclick="shareFromHistory('${key}')">📤 শেয়ার করুন</button>
+                `;
+                container.appendChild(item);
+                
+                // Store games data for later access
+                window[`gamesData_${key}`] = games;
+            });
+        }
+
+        function showGameDetails(key, gameIndex) {
+            const games = window[`gamesData_${key}`];
+            const selectedGame = games[parseInt(gameIndex)];
+            
+            const detailsDiv = document.getElementById(`details-${key}`);
+            detailsDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between;">
+                    <span>স্কোর:</span>
+                    <strong>${selectedGame.score}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>সঠিক:</span>
+                    <strong style="color: #4caf50;">${selectedGame.correct}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>ভুল:</span>
+                    <strong style="color: #f44336;">${selectedGame.wrong}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>স্কিপ:</span>
+                    <strong style="color: #ff9800;">${selectedGame.skipped || 0}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 5px; padding-top: 5px; border-top: 1px solid #ddd;">
+                    <span>তারিখ:</span>
+                    <strong>${new Date(selectedGame.date).toLocaleDateString('bn-BD')}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>সময়:</span>
+                    <strong>${new Date(selectedGame.date).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })}</strong>
+                </div>
+            `;
+        }
+
+        function shareFromHistory(key) {
+            const games = window[`gamesData_${key}`];
+            const selectElement = document.getElementById(`select-${key}`);
+            const selectedIndex = parseInt(selectElement.value);
+            const selectedGame = games[selectedIndex];
+            const totalPlays = games.length;
+            
+            if (!selectedGame) return;
+            
+            const levelNames = { easy: 'ইজি', medium: 'মিডিয়াম', hard: 'হার্ড' };
+            const gameDate = new Date(selectedGame.date);
+            const dateStr = gameDate.toLocaleDateString('bn-BD', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const timeStr = gameDate.toLocaleTimeString('bn-BD', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            const text = `🎮 Auroras Quiz Battle\n\n` +
+                `লেভেল: ${levelNames[selectedGame.level]}\n` +
+                `দ্রুতি: ${selectedGame.speed} সেকেন্ড\n` +
+                `মোট খেলা: ${totalPlays}\n` +
+                `নির্বাচিত খেলা: ${selectedIndex + 1}\n` +
+                `স্কোর: ${selectedGame.score}\n` +
+                `সঠিক: ${selectedGame.correct} | ভুল: ${selectedGame.wrong} | স্কিপ: ${selectedGame.skipped || 0}\n` +
+                `তারিখ: ${dateStr}\n` +
+                `সময়: ${timeStr}\n\n` +
+                `আপনিও খেলুন!`;
+
+            if (navigator.share) {
+                navigator.share({ text });
+            } else {
+                navigator.clipboard.writeText(text);
+                alert('স্কোর কপি হয়েছে!');
+            }
+        }
+
+        function shareScore() {
+            const select = document.getElementById('gameSelectResult');
+            const selectedIndex = parseInt(select.value);
+            const selectedGame = window.currentResultGames[selectedIndex];
+            const totalPlays = window.currentResultGames.length;
+            
+            if (!selectedGame) return;
+            
+            const levelNames = { easy: 'ইজি', medium: 'মিডিয়াম', hard: 'হার্ড' };
+            const gameDate = new Date(selectedGame.date);
+            const dateStr = gameDate.toLocaleDateString('bn-BD', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const timeStr = gameDate.toLocaleTimeString('bn-BD', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            const text = `🎮 Auroras Quiz Battle\n\n` +
+                `লেভেল: ${levelNames[selectedGame.level]}\n` +
+                `দ্রুতি: ${selectedGame.speed} সেকেন্ড\n` +
+                `মোট খেলা: ${totalPlays}\n` +
+                `নির্বাচিত খেলা: ${selectedIndex + 1}\n` +
+                `স্কোর: ${selectedGame.score}\n` +
+                `সঠিক: ${selectedGame.correct} | ভুল: ${selectedGame.wrong} | স্কিপ: ${selectedGame.skipped || 0}\n` +
+                `তারিখ: ${dateStr}\n` +
+                `সময়: ${timeStr}\n\n` +
+                `আপনিও খেলুন!`;
+
+            if (navigator.share) {
+                navigator.share({ text });
+            } else {
+                navigator.clipboard.writeText(text);
+                alert('স্কোর কপি হয়েছে!');
+            }
+        }
+
+        function skipQuestion() {
+            clearInterval(gameState.questionTimer);
+            gameState.skippedAnswers++;
+            
+            // Disable all buttons and show correct answer
+            const question = gameState.questions[gameState.currentQuestionIndex];
+            document.querySelectorAll('.btn-option').forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === question.answer) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 1000);
+        }
+
+        function populateResultGameSelector() {
+            const scores = JSON.parse(localStorage.getItem('quizScores') || '[]');
+            
+            // Filter scores for current level and speed
+            const matchingGames = scores.filter(s => 
+                s.level === gameState.level && s.speed === gameState.speed
+            );
+            
+            document.getElementById('totalPlaysResult').textContent = matchingGames.length;
+            
+            const select = document.getElementById('gameSelectResult');
+            select.innerHTML = '';
+            
+            matchingGames.forEach((game, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `খেলা ${index + 1} - ${new Date(game.date).toLocaleDateString('bn-BD')}`;
+                if (index === matchingGames.length - 1) {
+                    option.selected = true; // Select the latest game (current)
+                }
+                select.appendChild(option);
+            });
+            
+            // Store matching games for later access
+            window.currentResultGames = matchingGames;
+        }
+
+        function updateResultDisplay() {
+            const select = document.getElementById('gameSelectResult');
+            const selectedIndex = parseInt(select.value);
+            const selectedGame = window.currentResultGames[selectedIndex];
+            
+            if (!selectedGame) return;
+            
+            const levelNames = { easy: 'ইজি', medium: 'মিডিয়াম', hard: 'হার্ড' };
+            document.getElementById('resultLevel').textContent = levelNames[selectedGame.level];
+            document.getElementById('resultSpeed').textContent = `${selectedGame.speed} সেকেন্ড`;
+            document.getElementById('finalScore').textContent = selectedGame.score;
+            document.getElementById('correctCount').textContent = selectedGame.correct;
+            document.getElementById('wrongCount').textContent = selectedGame.wrong;
+            document.getElementById('skippedCount').textContent = selectedGame.skipped || 0;
+            
+            const emoji = selectedGame.score >= 100 ? '🏆' : selectedGame.score >= 50 ? '🎉' : '💪';
+            document.getElementById('resultEmoji').textContent = emoji;
+        }
+    </script>
+    
+  <!-- pop up for devloper info -->
+<script>
+// Get modal element
+const sharifulinfoModal = document.getElementById('sharifulinfoModal');
+
+// Function to open modal
+function openSharifulinfoModal() {
+  sharifulinfoModal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+// Function to close modal
+function closeSharifulinfoModal() {
+  sharifulinfoModal.style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking on X
+document.querySelector('.sharifulinfo-close').addEventListener('click', closeSharifulinfoModal);
+
+// Close modal when clicking outside of it
+window.addEventListener('click', function(event) {
+  if (event.target === sharifulinfoModal) {
+    closeSharifulinfoModal();
+  }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeSharifulinfoModal();
+  }
+});
+
+// Update your footer link to use this function
+document.addEventListener('DOMContentLoaded', function() {
+  const designerLink = document.querySelector('.designer-link');
+  if (designerLink) {
+    designerLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      openSharifulinfoModal();
+    });
+  }
+});
+</script>
+
+<!-- header design -->
+<script>
+    // Create floating particles
+    document.addEventListener('DOMContentLoaded', function() {
+        const header = document.querySelector('.header');
+        const particleCount = 15;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('floating-particle');
+            
+            // Random properties
+            const left = Math.random() * 100;
+            const size = Math.random() * 4 + 2;
+            const duration = Math.random() * 15 + 10;
+            const delay = Math.random() * 20;
+            
+            particle.style.left = `${left}%`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.background = `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.3})`;
+            
+            header.appendChild(particle);
+        }
+    });
+</script>
+</body>
+</html>
