@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎮 Auroras Quiz Battle (Physics Fun Edition)</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!--main css -->
     <style>
         * {
@@ -301,8 +301,7 @@
         }
     </style>
     
-    
-    <!-- pop up for devloper info -->
+      <!-- pop up for devloper info -->
 <style>
 .sharifulinfo-modal {
   display: none;
@@ -883,7 +882,8 @@
         }
     }
 </style>
-
+  
+  
 </head>
 <body>
     <div class="container">
@@ -1019,6 +1019,15 @@
                     <span>স্কিপ করা:</span>
                     <strong style="color: #ff9800;" id="skippedCount">0</strong>
                 </div>
+                <!-- CHANGE: Added date and time display in result screen -->
+                <div style="display: flex; justify-content: space-between; margin: 10px 0; padding-top: 10px; border-top: 1px solid #ddd;">
+                    <span>তারিখ:</span>
+                    <strong id="resultDate"></strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>সময়:</span>
+                    <strong id="resultTime"></strong>
+                </div>
             </div>
             <button class="btn btn-primary" onclick="showHome()">হোমে ফিরে যান</button>
             <button class="btn share-btn" onclick="shareScore()">📤 শেয়ার করুন</button>
@@ -1090,7 +1099,8 @@
         <p>© ২০২৫ সরকারি আজিজুল হক কলেজ, বগুড়া - পদার্থবিজ্ঞান বিভাগ</p>
     </footer>
 
-<!-- main script -->
+
+    <!-- Main script -->
     <script>
         let allQuestions = [];
         let gameState = {
@@ -1370,9 +1380,16 @@
 
         function displayScoreHistory() {
             const scores = JSON.parse(localStorage.getItem('quizScores') || '[]');
+            const filterLevel = document.getElementById('filterLevel').value;
+            
+            // CHANGE: Filter scores by selected level
+            const filteredScores = filterLevel === 'all' 
+                ? scores 
+                : scores.filter(s => s.level === filterLevel);
+            
             const container = document.getElementById('scoreHistory');
             
-            if (scores.length === 0) {
+            if (filteredScores.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #999;">কোনো স্কোর নেই</p>';
                 return;
             }
@@ -1381,7 +1398,7 @@
             
             // Group by level and speed
             const grouped = {};
-            scores.forEach((score, index) => {
+            filteredScores.forEach((score, index) => {
                 const key = `${score.level}-${score.speed}`;
                 if (!grouped[key]) {
                     grouped[key] = [];
@@ -1435,6 +1452,11 @@
                 // Store games data for later access
                 window[`gamesData_${key}`] = games;
             });
+        }
+
+        // CHANGE: Added filterScores function to filter score history by level
+        function filterScores() {
+            displayScoreHistory();
         }
 
         function showGameDetails(key, gameIndex) {
@@ -1592,6 +1614,9 @@
             
             // Store matching games for later access
             window.currentResultGames = matchingGames;
+            
+            // CHANGE: Update date and time display after populating selector
+            updateResultDisplay();
         }
 
         function updateResultDisplay() {
@@ -1608,6 +1633,18 @@
             document.getElementById('correctCount').textContent = selectedGame.correct;
             document.getElementById('wrongCount').textContent = selectedGame.wrong;
             document.getElementById('skippedCount').textContent = selectedGame.skipped || 0;
+            
+            // CHANGE: Update date and time display
+            const gameDate = new Date(selectedGame.date);
+            document.getElementById('resultDate').textContent = gameDate.toLocaleDateString('bn-BD', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('resultTime').textContent = gameDate.toLocaleTimeString('bn-BD', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
             
             const emoji = selectedGame.score >= 100 ? '🏆' : selectedGame.score >= 50 ? '🎉' : '💪';
             document.getElementById('resultEmoji').textContent = emoji;
